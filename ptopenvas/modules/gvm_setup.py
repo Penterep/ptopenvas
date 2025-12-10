@@ -40,28 +40,34 @@ class GVMSetup:
 
         return True
     
-
     def install_gvm(self) -> bool:
         """
-        Installs missing GVM dependencies and runs gvm-setup.
-        Outputs all subprocess logs directly to the terminal.
+        Verifies if the 'gvm' package is installed.
+        Installs it if missing.
         """
-        required_packages = ["gvmd", "gvm-cli"] # Minimal required packages
 
-        missing = [pkg for pkg in required_packages if shutil.which(pkg) is None]
+        # Check installation state
+        try:
+            subprocess.run(
+                ["dpkg", "-s", "gvm"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=True
+            )
+            print("Package 'gvm' is already installed.")
+            return True
 
-        if missing:
-            print(f"Installing missing packages: {', '.join(missing)}")
+        except subprocess.CalledProcessError:
+            print("Package 'gvm' is missing. Installing...")
             try:
                 subprocess.run(["sudo", "apt", "update"], check=True)
-                subprocess.run(["sudo", "apt", "install", "-y"] + missing, check=True)
-                print("Installation complete.")
-            except subprocess.CalledProcessError as e:
-                print(f"Failed to install packages: {e}")
-                return False
-        else:
-            pass#print("All core GVM packages are already installed.")
+                subprocess.run(["sudo", "apt", "install", "-y", "gvm"], check=True)
+                print("Package 'gvm' installed successfully.")
+                return True
 
+            except subprocess.CalledProcessError as e:
+                print(f"Failed to install 'gvm': {e}")
+                return False
 
     def ensure_gvmd_initialized(self) -> bool:
         """
