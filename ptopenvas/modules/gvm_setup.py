@@ -54,15 +54,14 @@ class GVMSetup:
                 stderr=subprocess.DEVNULL,
                 check=True
             )
-            print("Package 'gvm' is already installed.")
             return True
 
         except subprocess.CalledProcessError:
-            print("Package 'gvm' is missing. Installing...")
+            #print("Package 'gvm' is missing. Installing...")
             try:
                 subprocess.run(["sudo", "apt", "update"], check=True)
                 subprocess.run(["sudo", "apt", "install", "-y", "gvm"], check=True)
-                print("Package 'gvm' installed successfully.")
+                #print("Package 'gvm' installed successfully.")
                 return True
 
             except subprocess.CalledProcessError as e:
