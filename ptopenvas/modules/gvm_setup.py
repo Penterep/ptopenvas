@@ -152,12 +152,16 @@ class GVMSetup:
                         #print(f"Reset penterep password to '{PASSWORD}'")
                     except Exception as e:
                         print(f"Failed to reset penterep password: {e}")
-                        return
+                        sys.exit(1)
+
 
         except PermissionError:
             print("Please reset your shell (log out and log back in) before running scripts that access GVMD.")
+            sys.exit(1)
         except GvmError as e:
             print(f"Failed to create user: {e}")
+            sys.exit(1)
+
 
     def _create_user_if_needed(self, username, password):
         r = subprocess.run([
